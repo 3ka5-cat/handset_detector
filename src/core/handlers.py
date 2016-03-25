@@ -2,9 +2,16 @@
 
 from __future__ import unicode_literals
 from tornado.web import RequestHandler
+from .exceptions import ImproperlyConfigured
 
 
 class APIHandler(RequestHandler):
+    executor = None
+
+    def initialize(self):
+        self.executor = self.settings.get("executor")
+        if "hd" not in self.settings:
+            raise ImproperlyConfigured("HandsetDetection is missed from settings")
 
     def write(self, data, **kwargs):
         result = dict(success=True, data=data)

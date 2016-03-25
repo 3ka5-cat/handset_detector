@@ -1,49 +1,45 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import unicode_literals
-from concurrent.futures import ThreadPoolExecutor
+
 from tornado.concurrent import run_on_executor
 from tornado.gen import coroutine
 
-from core.exceptions import ImproperlyConfigured
-from .base import APIHandler
+from core import hd_wrapper
+from core.handlers import APIHandler
 
 
 class VendorListHandler(APIHandler):
-    executor = ThreadPoolExecutor(max_workers=4)
 
     @run_on_executor
     def get_vendors(self, hd):
-        result = hd.deviceVendors()
-        if result["status"] == 0:
-            vendors = result["vendor"]
-        elif result["status"] == 301:
-            vendors = []
-        else:
-            raise Exception("Internal error")
-
-        return vendors
+        return hd_wrapper.VendorsAPI.vendor_list(hd)
 
     @coroutine
     def get(self):
-        if "hd" not in self.settings:
-            raise ImproperlyConfigured("HandsetDetection is missed from settings")
-
-        result = yield self.get_vendors(hd=self.settings["hd"])
-
+        result = yield self.get_vendors(self.settings["hd"])
         self.write({"vendors": result})
 
 
 class VendorModelListHandler(APIHandler):
+
+    @run_on_executor
+    def get_vendor_model_list(self, hd, vendor):
+        return hd_wrapper.VendorsAPI.vendor_model_list(hd, vendor)
+
+    @coroutine
     def get(self, vendor):
-        result = {"models": [
-            {"name": "N80"},
-            {"name": "N90"}
-        ]}
-        self.write(result)
+        result = yield self.get_vendor_model_list(self.settings["hd"], vendor)
+        self.write({"models": result})
 
 
 class VendorModelHandler(APIHandler):
+
+    @run_on_executor
+    def get_vendor_model(self, hd, vendor, model):
+        return hd_wrapper.VendorsAPI.vendor_model(hd, vendor, model)
+
+    @coroutine
     def get(self, vendor, model):
-        result = {"model": {"name": "N80"}}
-        self.write(result)
+        result = yield self.get_vendor_model(self.settings["hd"], vendor, model)
+        self.write({"model": result})

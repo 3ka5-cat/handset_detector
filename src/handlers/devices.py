@@ -2,7 +2,8 @@
 
 from __future__ import unicode_literals
 import json
-from .base import APIHandler
+
+from core.handlers import APIHandler
 
 
 class DeviceDetect(APIHandler):
