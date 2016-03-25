@@ -16,8 +16,6 @@ class DeviceDetect(APIHandler):
         if missed_fields:
             raise KeyError("Fields are mandatory: {}".format(",".join(missed_fields)))
 
-        result = dict(success=True,
-                      data={
-                          "query": query,
-                          "device": {"name": "N80"}})
+        result = {"query": query,
+                  "device": {"name": "N80"}}
         self.write(result)

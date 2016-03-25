@@ -5,8 +5,8 @@ from concurrent.futures import ThreadPoolExecutor
 from tornado.concurrent import run_on_executor
 from tornado.gen import coroutine
 
-from .base import APIHandler
 from core.exceptions import ImproperlyConfigured
+from .base import APIHandler
 
 
 class VendorListHandler(APIHandler):
@@ -31,23 +31,19 @@ class VendorListHandler(APIHandler):
 
         result = yield self.get_vendors(hd=self.settings["hd"])
 
-        result = dict(success=True,
-                      data={"vendors": result})
-        self.write(result)
+        self.write({"vendors": result})
 
 
 class VendorModelListHandler(APIHandler):
     def get(self, vendor):
-        result = dict(success=True,
-                      data={"models": [
-                          {"name": "N80"},
-                          {"name": "N90"}
-                      ]})
+        result = {"models": [
+            {"name": "N80"},
+            {"name": "N90"}
+        ]}
         self.write(result)
 
 
 class VendorModelHandler(APIHandler):
     def get(self, vendor, model):
-        result = dict(success=True,
-                      data={"model": {"name": "N80"}})
+        result = {"model": {"name": "N80"}}
         self.write(result)

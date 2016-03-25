@@ -5,11 +5,15 @@ from tornado.web import RequestHandler
 
 
 class APIHandler(RequestHandler):
+
+    def write(self, data, **kwargs):
+        result = dict(success=True, data=data)
+        super(APIHandler, self).write(result)
     
     def write_error(self, status_code=None, **kwargs):
-        message = {"status": "error"}
+        result = dict(success=False)
         exception = kwargs.get("exc_info")
         if exception:
-            message["data"] = str(exception[1])
-        self.write(message)
+            result["data"] = str(exception[1])
+        super(APIHandler, self).write(result)
         self.finish()
