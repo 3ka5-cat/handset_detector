@@ -12,7 +12,7 @@ from handlers import urls
 
 
 def main():
-    application = Application(handlers=urls.routes, settings=settings)
+    application = Application(handlers=urls.routes, **settings)
     application.listen(options.port)
     tornado.ioloop.IOLoop.instance().start()
 
